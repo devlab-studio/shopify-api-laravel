@@ -4,95 +4,10 @@ namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 
 class Customers
 {
-    public static $customersNodeQuery = '
-        id
-        firstName
-        lastName
-        displayName
-        email
-        phone
-        locale
-        tags
-        note
-        state
-        image{
-            url
-        }
-        createdAt
-        updatedAt
-        lifetimeDuration
-        numberOfOrders
-        amountSpent {
-            amount
-            currencyCode
-        }
-        defaultAddress {
-            firstName
-            lastName
-            address1
-            address2
-            phone
-            city
-            zip
-            province
-            provinceCode
-            country
-            countryCodeV2
-        }
-        addresses {
-            firstName
-            lastName
-            address1
-            address2
-            phone
-            city
-            zip
-            province
-            provinceCode
-            country
-            countryCodeV2
-        }
-        addressesV2(first: 10) {
-            edges {
-                node {
-                    firstName
-                    lastName
-                    address1
-                    address2
-                    phone
-                    city
-                    zip
-                    province
-                    provinceCode
-                    country
-                    countryCodeV2
-                }
-            }
-        }
-        events(first: 10) {
-            edges {
-                node {
-                    id
-                    createdAt
-                }
-            }
 
-        }
-    ';
-
-
-
-    public static function getCustomer($store, $customer_id, $sh_client = null)
+    public static function getCustomer($store, $customer_id, $sh_client = null , $with = [], $limits = [])
     {
-
-        $queryString = '
-            query {
-               customer(id: "gid://shopify/Customer/' . $customer_id . '") {
-                    ' . self::$customersNodeQuery . '
-                }
-            }
-        ';
-
+        $queryString = BuildGraphQl::build('customer', $with, $limits);
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'customer_id' => $customer_id
         ], 'customer',  $sh_client);
@@ -100,7 +15,7 @@ class Customers
         return $response;
     }
 
-    public static function getCustomers($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null)
+    public static function getCustomers($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [])
     {
 
         $query = '';
@@ -119,19 +34,7 @@ class Customers
             }
         }
 
-        $queryString = '
-         query ($recordsInPage: Int!, $cursor: String){
-                customers('.$query.'first: $recordsInPage, after: $cursor){
-                    nodes {
-                        '.self::$customersNodeQuery.'
-                    }
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                    }
-                }
-            }
-        ';
+        $queryString = BuildGraphQl::build('customers', $with, $limits);    
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'recordsInPage' => $recordsInPage,
             'cursor' => $cursor,
@@ -300,35 +203,7 @@ class Customers
 
         return $response;
     }
-
-    public static function getCustomerbyMail($store, $email, $sh_client = null)
-    {
-        if (empty($sh_client)) {
-            $sh_client = Core::getGraphQLClient($store);
-        }
-
-        $queryString = '
-            query ($query: String!) {
-                customers(first: 1, query: $query) {
-                    nodes {
-                        id
-                        email
-                        firstName
-                        lastName
-
-                    }
-                }
-            }
-        ';
-
-        $variables = [
-            'query' => 'email:' . $email,
-        ];
-
-        $response = Core::executeQueryAndHandleErrors($store, $queryString, $variables, 'customers', $sh_client);
-
-        return $response;
-    }
+    
     public static function createCustomerStoreFront($store, $customer, $sh_client = null)
     {
         if (empty($sh_client)) {

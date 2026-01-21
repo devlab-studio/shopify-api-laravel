@@ -4,147 +4,8 @@ namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 
 class Products
 {
-    public static $productNodeQuery = '
-        id
-        title
-        description
-        descriptionHtml
-        productType
-        vendor
-        handle
-        tags
-        status
-        hasOnlyDefaultVariant
-        options {
-            name
-            position
-            values
-        }
-        productType
-        category {
-            id
-            name
 
-
-        }
-        collections(first: 10) {
-            nodes{
-                id
-                title
-                description
-                handle
-                resourcePublicationsV2(first: 10) {
-                    edges {
-                        node {
-                            publishDate
-                            publication {
-                                id
-                                name
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        metafields (first: ##metafieldsCount##) {
-            nodes {
-                id
-                key
-                value
-                type
-                namespace
-            }
-        }
-        media (first: ##mediaCount##) {
-            nodes {
-                id
-                mediaContentType
-                preview {
-                    image {
-                        id
-                        url
-                        altText
-                    }
-                }
-                ... on Video {
-                    sources {
-                        url
-                        mimeType
-                        width
-                        height
-                    }
-                }
-            }
-        }
-        variants (first: ##variantsCount##) {
-            nodes {
-                id
-                title
-                sku
-                price
-                compareAtPrice
-                createdAt
-                inventoryItem {
-                    id
-                    inventoryLevels (first: 10) {
-                        nodes {
-                            id
-                            quantities(names: ["available"]) {
-                                name
-                                quantity
-                            }
-                        }
-                    }
-                }
-                metafields (first: 5) {
-                    nodes {
-                        id
-                        key
-                        value
-                        type
-                        namespace
-                    }
-                }
-            }
-        }
-    ';
-    public static $variantNodeQuery = '
-        id
-        title
-        sku
-        price
-        createdAt
-        product{
-            id
-        }
-        inventoryItem {
-            id
-            inventoryLevels (first: 10) {
-                nodes {
-                    id
-                    location {
-                        id
-                    }
-                    quantities(names: ["available"]) {
-                        name
-                        quantity
-
-                    }
-                }
-            }
-        }
-        metafields (first: 5) {
-            nodes {
-                id
-                key
-                value
-                type
-                namespace
-            }
-        }
-    ';
-
-    public static function getProduct($store, $product_id, $sh_client = null, $metafieldsCount = 30, $mediaCount = 30, $variantsCount = 100)
+    public static function getProduct($store, $product_id, $sh_client = null, $with = [], $limits = [])
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -153,11 +14,8 @@ class Products
         if (is_numeric($product_id)) {
             $product_id = 'gid://shopify/Product/'.$product_id;
         }
-        $queryString = str_replace(
-            ['##metafieldsCount##', '##mediaCount##', '##variantsCount##'],
-            [$metafieldsCount, $mediaCount, $variantsCount],
-            self::$productNodeQuery
-        );
+
+        $queryString = (new BuildGraphQl('product'))->with($with)->limits($limits)->build();
 
         $queryString = '
             query getProduct($id: ID!) {
@@ -172,7 +30,7 @@ class Products
 
         return $response;
     }
-    public static function getProducts($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $metafieldsCount = 10, $mediaCount = 10, $variantsCount = 25)
+    public static function getProducts($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [])
     {
 
         $query = '';
@@ -198,11 +56,7 @@ class Products
 
         }
 
-        $queryString = str_replace(
-            ['##metafieldsCount##', '##mediaCount##', '##variantsCount##'],
-            [$metafieldsCount, $mediaCount, $variantsCount],
-            self::$productNodeQuery
-        );
+         $queryString = (new BuildGraphQl('product'))->with($with)->limits($limits)->build();
 
         $queryString = '
             query ($recordsInPage: Int!, $cursor: String){
@@ -224,7 +78,7 @@ class Products
 
         return $response;
     }
-    public static function getProductVariant($store, $variant_id, $sh_client = null)
+    public static function getProductVariant($store, $variant_id, $sh_client = null, $with = [], $limits = [])
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -234,13 +88,7 @@ class Products
             $variant_id = 'gid://shopify/ProductVariant/'.$variant_id;
         }
 
-        $queryString = '
-            query getProductVariant($id: ID!) {
-                productVariant (id: $id){
-                    '.self::$variantNodeQuery.'
-                }
-            }
-        ';
+        $queryString = (new BuildGraphQl('productVariants'))->with($with)->limits($limits)->build();
 
         return Core::executeQueryAndHandleErrors($store, $queryString, [
             'id' => $variant_id
@@ -248,7 +96,7 @@ class Products
 
         return $response;
     }
-    public static function getProductVariants($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100)
+    public static function getProductVariants($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [])
     {
 
         $query = '';
@@ -264,19 +112,7 @@ class Products
             }
         }
 
-        $queryString = '
-            query ($recordsInPage: Int!, $cursor: String){
-                productVariants ('.$query.'first: $recordsInPage, after: $cursor){
-                    nodes {
-                        '.self::$variantNodeQuery.'
-                    }
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                    }
-                }
-            }
-        ';
+        $queryString = (new BuildGraphQl('productVariants'))->with($with)->limits($limits)->build();
 
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'recordsInPage' => $recordsInPage,

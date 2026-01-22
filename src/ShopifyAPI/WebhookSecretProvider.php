@@ -1,7 +1,6 @@
 <?php
 
-namespace Devlab\ShopifyApiLaravel\Classes;
-
+namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 
 use Devlab\ShopifyApiLaravel\ShopifyAPI\SecretProvider;
 use Devlab\ShopifyApiLaravel\ShopifyAPI\Store;

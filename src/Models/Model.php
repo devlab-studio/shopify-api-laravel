@@ -34,12 +34,12 @@ class Model extends LaravelModel
                 }
             }
         }
-        if ($do_log && $this->isDirty()) {
-            Panel::saveLog($user_id, get_class($this).'::save', [
-                'original' => $this->getOriginal(),
-                'changes' => $this->getDirty(),
-            ]);
-        }
+        // if ($do_log && $this->isDirty()) {
+        //     Panel::saveLog($user_id, get_class($this).'::save', [
+        //         'original' => $this->getOriginal(),
+        //         'changes' => $this->getDirty(),
+        //     ]);
+        // }
         parent::save($options); // Calls Default Save
     }
     /**
@@ -47,11 +47,11 @@ class Model extends LaravelModel
 	 */
     public function delete ($do_log = true)
     {
-        if ($do_log) {
-            Panel::saveLog(auth()->user()->id??0, get_class($this).'::delete', [
-                'id' => $this->id
-            ]);
-        }
+        // if ($do_log) {
+        //     Panel::saveLog(auth()->user()->id??0, get_class($this).'::delete', [
+        //         'id' => $this->id
+        //     ]);
+        // }
 
         if (array_key_exists('updated_user', $this->attributes) && empty($this->updated_user)) {
             $this->updated_user = auth()->user()->id ?? $this->updated_user;

@@ -55,7 +55,6 @@ return [
     ],
 
     'variants' => [
-
         'id',
         'title',
         'sku',
@@ -63,18 +62,12 @@ return [
         'createdAt',
         'inventoryItem {
             id
-            inventoryLevels(first: 10) {
+            inventoryLevels( ##inventoryLevelsCount##) {
                 nodes {
-                    id
-                    quantities(names: ["available"]) {
-                        name
-                        quantity
-                    }
+                   ##inventoryLevelsNodes##
                 }
             }
         }',
-
-
 
         'metafields(first: ##metafieldsCount##) {
             nodes {
@@ -83,8 +76,6 @@ return [
         }',
 
     ],
-
-
 
     'customer' => [
         'id',
@@ -150,7 +141,6 @@ return [
             }
         }',
 
-
         'events(first: ##eventsCount##) {
             edges {
                 node {
@@ -190,26 +180,25 @@ return [
             }
         }',
 
-
         'totalDiscountsSet {
             shopMoney {
                 amount
                 currencyCode
             }
         }
+
         totalShippingPriceSet {
             shopMoney {
                 amount
             }
         }
+
         currentTotalPriceSet {
             shopMoney {
                 amount
                 currencyCode
             }
         }',
-
-
 
         'shippingLine {
             title
@@ -221,6 +210,7 @@ return [
                     currencyCode
                 }
             }
+
             discountedPriceSet {
                 shopMoney {
                     amount
@@ -229,15 +219,11 @@ return [
             }
         }',
 
-
-
         'lineItems(first: ##lineItemsCount##) {
             nodes {
                 ##lineItemsNodes##
             }
         }',
-
-
 
         'fulfillments(first: ##fulfillmentsCount##) {
             id
@@ -287,8 +273,7 @@ return [
         'countryHarmonizedSystemCodes {
             edges {
                 node {
-                    countryCode
-                    harmonizedSystemCode
+                    ##countryHarmonizedSystemCodes##
                 }
             }
         }',
@@ -425,6 +410,19 @@ return [
         'totalQuantity',
         'lineItem {
             id
+        }'
+    ],
+
+    'countryHarmonizedSystemCodes' => [
+        'countryCode',
+        'harmonizedSystemCode'
+    ],
+
+    'inventoryLevels' => [
+        'id',
+        'quantities(names: ["available"]) {
+            name
+            quantity
         }'
     ],
 ];

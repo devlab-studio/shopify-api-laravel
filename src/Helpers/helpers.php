@@ -42,18 +42,7 @@ if (!function_exists('length')) {
 	}
 }
 
-if (!function_exists('dl_signedRoute')) {
-	function dl_signedRoute($name, $parameters = [], $absolute = true)
-	{
-		return dlURL::signedRoute($name, $parameters, $absolute);
-	}
-}
-if (!function_exists('dl_signedPublicRoute')) {
-	function dl_signedPublicRoute($name, $parameters = [], $absolute = true)
-	{
-		return dlURL::signedPublicRoute($name, $parameters, $absolute);
-	}
-}
+
 
 if (!function_exists('dl_stringSVClean')) {
 	function dl_stringSVClean(string $vcString, string $vcSeparator = ',', string $vcDefault = '')

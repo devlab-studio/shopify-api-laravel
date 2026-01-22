@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class StoresAction extends Model
 {
     use HasFactory;
-    use WithExtensions;
 
     public static function dlGet(
         ?int $model_id = 0,

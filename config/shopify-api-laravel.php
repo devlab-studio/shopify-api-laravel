@@ -50,8 +50,7 @@ return [
             nodes {
                 ##variantsNodes##
             }
-        }',
-
+        }'
     ],
 
     'variants' => [
@@ -62,7 +61,7 @@ return [
         'createdAt',
         'inventoryItem {
             id
-            inventoryLevels( ##inventoryLevelsCount##) {
+            inventoryLevels(first: ##inventoryLevelsCount##) {
                 nodes {
                    ##inventoryLevelsNodes##
                 }
@@ -73,6 +72,10 @@ return [
             nodes {
                 ##metafieldsNodes##
             }
+        }',
+
+        'product {
+            ##productNodes##
         }',
 
     ],
@@ -93,17 +96,14 @@ return [
         'lifetimeDuration',
         'numberOfOrders',
 
-
         'image {
             url
         }',
-
 
         'amountSpent {
             amount
             currencyCode
         }',
-
 
         'defaultAddress {
             firstName
@@ -185,15 +185,15 @@ return [
                 amount
                 currencyCode
             }
-        }
+        }',
 
-        totalShippingPriceSet {
+        'totalShippingPriceSet {
             shopMoney {
                 amount
             }
-        }
+        }',
 
-        currentTotalPriceSet {
+        'currentTotalPriceSet {
             shopMoney {
                 amount
                 currencyCode
@@ -298,7 +298,6 @@ return [
             length { unit value }
         }',
 
-
         'unitCost {
             amount
             currencyCode
@@ -317,7 +316,6 @@ return [
         }',
 
     ],
-
 
     'metafields' => [
         'id',
@@ -365,6 +363,7 @@ return [
         'createdAt',
     ],
 
+
     'lineItems' => [
         'id',
         'title',
@@ -374,23 +373,22 @@ return [
             shopMoney {
                 amount
                 currencyCode
-                }
             }
-            discountedUnitPriceSet {
-                shopMoney {
-                    amount
-                    currencyCode
-                }
+        }',
+        'discountedUnitPriceSet {
+            shopMoney {
+                amount
+                currencyCode
             }
-            product {
-                id
-                title
-                handle
-            }
-            variant {
-                id
-                title
-            }
+        }',
+        'product {
+            id
+            title
+            handle
+        }',
+        'variant {
+            id
+            title
         }'
     ],
 
@@ -399,17 +397,8 @@ return [
         'status',
         'lineItems(first: ##lineItemsCount##) {
             nodes {
-                ##lineItems##
+                ##lineItemsNodes##
             }
-        }'
-    ],
-
-    'lineItems' => [
-        'id',
-        'sku',
-        'totalQuantity',
-        'lineItem {
-            id
         }'
     ],
 
@@ -425,5 +414,6 @@ return [
             quantity
         }'
     ],
+
 ];
 

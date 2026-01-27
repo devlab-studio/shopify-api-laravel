@@ -7,7 +7,7 @@ class Customers
 
     public static function getCustomer($store, $customer_id, $sh_client = null , $with = [], $limits = [])
     {
-        $queryString = BuildGraphQl::build('customer', $with, $limits);
+       $queryString = (new BuildGraphQl('customer'))->with($with)->limits($limits)->build();
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'customer_id' => $customer_id
         ], 'customer',  $sh_client);
@@ -34,7 +34,7 @@ class Customers
             }
         }
 
-        $queryString = BuildGraphQl::build('customers', $with, $limits);    
+        $queryString = (new BuildGraphQl('customers'))->with($with)->limits($limits)->build();
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'recordsInPage' => $recordsInPage,
             'cursor' => $cursor,
@@ -203,7 +203,7 @@ class Customers
 
         return $response;
     }
-    
+
     public static function createCustomerStoreFront($store, $customer, $sh_client = null)
     {
         if (empty($sh_client)) {

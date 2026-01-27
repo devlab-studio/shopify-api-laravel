@@ -17,8 +17,7 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
             ->name('shopify-api-laravel')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_shopify_api_laravel_table')
-            ->hasCommand(ShopifyApiLaravelCommand::class);
+            ->hasMigration('create_shopify_api_laravel_table');
     }
 
     public function boot()
@@ -31,7 +30,6 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
             __DIR__ . '/Helpers' => base_path('app/Helpers'),
             __DIR__ . '/Classes' => app_path('Classes'),
             __DIR__ . '/Models' => app_path('Models/ShopifyApiLaravel'),
-            __DIR__ . '/Http/Controllers' => app_path('Http/Controllers/ShopifyApiLaravel'),
             __DIR__ . '/ShopifyAPI' => app_path('ShopifyAPI'),
             __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], 'shopify-api-laravel-files');

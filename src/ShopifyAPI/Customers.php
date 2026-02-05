@@ -20,18 +20,22 @@ class Customers
 
         $query = '';
         if (!empty($filters)) {
+            $text_filters = [];
+            $query = 'query: "###FILTERS###", ';
             if (isset($filters['tag_not'])) {
-                $query .= 'query: "tag_not:\''.$filters['tag_not'].'\'", ';
+                $text_filters[] = 'tag_not:\''.$filters['tag_not'].'\'';
             }
             if (isset($filters['created_at'])) {
-                $query .= 'query: "created_at:>=\''.$filters['created_at'].'\'", ';
+                $text_filters[] = 'created_at:>=\''.$filters['created_at'].'\'';
             }
             if (isset($filters['email'])) {
-                $query .= 'query: "email:'.$filters['email'].'", ';
+                $text_filters[] = 'query: "email:'.$filters['email'].'", ';
             }
             if (isset($filters['state'])) {
-                $query .= 'query: "state:'.$filters['state'].'", ';
+                $text_filters[] ='query: "state:'.$filters['state'].'", ';
             }
+
+            $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
         $queryString = (new BuildGraphQl('customers'))->with($with)->limits($limits)->build();

@@ -224,27 +224,37 @@ class Orders
     {
         $query = '';
         if (!empty($filters)) {
+            $text_filters = [];
+            $query = 'query: "###FILTERS###", ';
             if (isset($filters['tag_not'])) {
-                $query .= 'query: "tag_not:\''.$filters['tag_not'].'\'", ';
+                $text_filters[] = 'tag_not:\''.$filters['tag_not'].'\'';
             }
             if (isset($filters['created_at'])) {
-                $query .= 'query: "created_at:>=\''.$filters['created_at'].'\'", ';
+                $text_filters[] = 'created_at:>=\''.$filters['created_at'].'\'';
             }
             if (isset($filters['processed_before'])) {
-                $query .= 'query: "processed_at:<=\''.$filters['processed_before'].'\'", ';
+                $text_filters[] = 'processed_at:<=\''.$filters['processed_before'].'\'';
             }
             if (isset($filters['processed_after'])) {
-                $query .= 'query: "processed_at:>=\''.$filters['processed_after'].'\'", ';
+                $text_filters[] = 'processed_at:>=\''.$filters['processed_after'].'\'';
             }
             if (isset($filters['unfulfilled_processed_before'])) {
-                $query .= 'query: "(processed_at:<=\''.$filters['unfulfilled_processed_before'].'\') AND (fulfillment_status:unfulfilled OR fulfillment_status:partial)", ';
+               $text_filters[] = 'query: "(processed_at:<=\''.$filters['unfulfilled_processed_before'].'\') AND (fulfillment_status:unfulfilled OR fulfillment_status:partial)", ';
             }
             if (isset($filters['financial_status'])) {
-                $query .= 'query: "financial_status:'.$filters['financial_status'].'", ';
+                $text_filters[] = 'financial_status:'.$filters['financial_status'];
             }
-            if (isset($filters['tag'])) {
-                $query .= 'query: "tag:\''.$filters['tag'].'\'", ';
+            if (isset($filters['fulfillment_status'])) {
+                $text_filters[] = 'fulfillment_status:'.$filters['fulfillment_status'];
             }
+            if (isset($filters['return_status'])) {
+                $text_filters[] = 'return_status:'.$filters['return_status'];
+            }
+             if (isset($filters['tag'])) {
+                $text_filters[] = 'tag:\''.$filters['tag'].'\'';
+            }
+
+            $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
         $queryString = '

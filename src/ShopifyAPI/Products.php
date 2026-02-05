@@ -35,28 +35,29 @@ class Products
 
         $query = '';
         if (!empty($filters)) {
+            $text_filters = [];
+            $query = 'query: "###FILTERS###", ';
             if (isset($filters['tag_not'])) {
-                $query .= 'query: "tag_not:\''.$filters['tag_not'].'\'", ';
+                $text_filters[] = 'tag_not:\''.$filters['tag_not'].'\'';
             }
             if (isset($filters['sku'])) {
-                $query .= 'query: "sku:\''.$filters['sku'].'\' AND status:ACTIVE,DRAFT", ';
+                $text_filters[] = 'sku:\''.$filters['sku'].'\' AND status:ACTIVE,DRAFT", ';
             }
             if (isset($filters['handle'])) {
-                $query .= 'query: "handle:'.$filters['handle'].' AND status:ACTIVE,DRAFT", ';
+                $text_filters[] = 'handle:'.$filters['handle'].' AND status:ACTIVE,DRAFT", ';
             }
             if (isset($filters['created_at'])) {
-                $query .= 'query: "created_at:>=\''.$filters['created_at'].'\'", ';
+                $text_filters[] = 'created_at:>=\''.$filters['created_at'].'\'", ';
             }
             if (isset($filters['id'])) {
-                $query .= 'query: "id:>='.$filters['id'].'", ';
+                $text_filters[] = '"id:>='.$filters['id'].'", ';
             }
             if (isset($filters['status'])) {
-                $query .= 'query: "status:'.$filters['status'].'", ';
+                $text_filters[] = '"status:'.$filters['status'].'", ';
             }
-
+            $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
-
-         $queryString = (new BuildGraphQl('product'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl('product'))->with($with)->limits($limits)->build();
 
         $queryString = '
             query ($recordsInPage: Int!, $cursor: String){
@@ -99,20 +100,38 @@ class Products
     public static function getProductVariants($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [])
     {
 
-        $query = '';
+         $query = '';
         if (!empty($filters)) {
+            $text_filters = [];
+            $query = 'query: "###FILTERS###", ';
             if (isset($filters['created_at'])) {
-                $query .= 'query: "created_at:>=\''.$filters['created_at'].'\'", ';
+                $text_filters[] = 'created_at:>=\''.$filters['created_at'].'\'';
             }
             if (isset($filters['id'])) {
-                $query .= 'query: "id:>='.$filters['id'].'", ';
+                $text_filters[] = 'id:>='.$filters['id'].'", ';
             }
             if (isset($filters['sku'])) {
-                $query .= 'query: "sku:\''.$filters['sku'].'\'", ';
+                $text_filters[] = 'sku:\''.$filters['sku'].'\', ';
             }
+
+            $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
         $queryString = (new BuildGraphQl('productVariants'))->with($with)->limits($limits)->build();
+
+        $queryString = '
+            query ($recordsInPage: Int!, $cursor: String){
+                productVariants ('.$query.'first: $recordsInPage, after: $cursor){
+                    nodes {
+                        '.$queryString.'
+                    }
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                }
+            }
+        ';
 
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'recordsInPage' => $recordsInPage,

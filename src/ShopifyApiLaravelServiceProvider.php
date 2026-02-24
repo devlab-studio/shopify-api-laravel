@@ -27,9 +27,9 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
 
         // Editable files to be published
         $this->publishes([
-            __DIR__ . '/Helpers' => base_path('app/Helpers'),
+            __DIR__ . '/Helpers' => base_path('Helpers'),
             __DIR__ . '/Classes' => app_path('Classes'),
-            __DIR__ . '/Models' => app_path('Models/ShopifyApiLaravel'),
+            __DIR__ . '/Models' => app_path('Models'),
             __DIR__ . '/ShopifyAPI' => app_path('ShopifyAPI'),
             __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], 'shopify-api-laravel-files');

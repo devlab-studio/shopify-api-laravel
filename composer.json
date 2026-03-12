@@ -1,12 +1,12 @@
 {
-    "name": "dev-lab/shopify-api-laravel",
+    "name": "devlab-studio/shopify-api-laravel",
     "description": "This is my package shopify-api-laravel",
     "keywords": [
         "Devlab",
         "laravel",
         "shopify-api-laravel"
     ],
-    "homepage": "https://github.com/devlab/shopify-api-laravel",
+    "homepage": "https://github.com/devlab-studio/shopify-api-laravel",
     "license": "MIT",
     "authors": [
         {

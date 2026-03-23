@@ -4,10 +4,12 @@ namespace Devlab\ShopifyApiLaravel\Models;
 
 use Devlab\ShopifyApiLaravel\Traits\WithExtensions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class StoresAction extends Model
 {
     use HasFactory;
+    use WithExtensions;
 
     public static function dlGet(
         ?int $model_id = 0,

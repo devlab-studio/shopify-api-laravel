@@ -2,10 +2,7 @@
 
 // config for Devlab/ShopifyApiLaravel
 return [
-
-
     'product' => [
-
         'id',
         'title',
         'description',
@@ -235,29 +232,24 @@ return [
             }
         }',
 
-
         'fulfillmentOrders(first: ##fulfillmentOrdersCount##) {
             nodes {
                 ##fulfillmentOrdersNodes##
             }
         }',
 
-
         'paymentTerms {
             id
         }',
-
 
         'customer {
             id
             displayName
             email
         }',
-
     ],
 
     'inventoryItem' => [
-
         'id',
         'sku',
         'tracked',
@@ -317,6 +309,33 @@ return [
 
     ],
 
+    'shop' => [
+        'id',
+        'name',
+        'url',
+
+    ],
+
+    'app' => [
+        'id',
+        'title',
+        'installation' => [
+            'launchUrl',
+            'activeSubscriptions' => [
+                'id',
+                'name',
+                'createdAt',
+                'returnUrl',
+                'status',
+                'currentPeriodEnd',
+                'trialDays',
+                'lineItems' => [
+                    'id'
+                ]
+            ]
+        ]
+    ],
+
     'metafields' => [
         'id',
         'key',
@@ -357,12 +376,10 @@ return [
         'countryCodeV2',
     ],
 
-
     'events' => [
         'id',
         'createdAt',
     ],
-
 
     'lineItems' => [
         'id',

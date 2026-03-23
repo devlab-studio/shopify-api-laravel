@@ -4,223 +4,25 @@ namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 
 class Orders
 {
-    public static $orderNodeQuery = '
-        id
-        name
-        tags
-        createdAt
-        processedAt
-        cancelledAt
-        paymentGatewayNames
-        confirmationNumber
-        currencyCode
-        customAttributes {
-            key
-            value
-        }
-        fulfillable
-        displayFulfillmentStatus
-        displayFinancialStatus
-        metafields (first: ##metafieldsCount##) {
-            nodes {
-                id
-                key
-                value
-                type
-                namespace
-            }
-        }
-        discountCodes
-        totalDiscountsSet {
-            shopMoney {
-                amount
-                currencyCode
-            }
-        }
-        note
-        totalShippingPriceSet{
-            shopMoney{
-                amount
-            }
-        }
-        currentTotalPriceSet {
-            shopMoney {
-                amount
-                currencyCode
-            }
-        }
-        shippingLine {
-            title
-            source
-            code
-            originalPriceSet {
-                shopMoney {
-                    amount
-                    currencyCode
-                }
-            }
-            discountedPriceSet {
-                shopMoney {
-                    amount
-                    currencyCode
-                }
-            }
-        }
-        lineItems(first: 100) {
-            nodes {
-                id
-                title
-                currentQuantity
-                sku
-                discountedTotalSet {
-                    shopMoney {
-                        amount
-                        currencyCode
-                    }
-                }
-                discountedUnitPriceSet {
-                    shopMoney {
-                        amount
-                        currencyCode
-                    }
-                }
-                product {
-                    id
-                    title
-                    handle
-                }
-                variant {
-                    id
-                    title
-                }
-            }
-        }
-        fulfillments(first: 10) {
-            id
-            status
-            trackingInfo {
-                company
-                number
-                url
-            }
-        }
-        fulfillmentOrders(first: 10) {
-            nodes {
-                id
-                status
-                lineItems (first: 100) {
-                    nodes {
-                        id
-                        sku
-                        totalQuantity
-                        lineItem {
-                            id
-                        }
-                    }
-                }
-            }
-        }
-        paymentTerms {
-          id
-        }
-        customerLocale
-        ##customer##
-    ';
-
-    private static function getOrderNodeQuery($withCustomer = false, $metafieldsCount = 15)
-    {
-        $node_query = self::$orderNodeQuery;
-        if ($withCustomer) {
-            $node_query = str_replace('##customer##',
-                'phone
-                email
-                billingAddress {
-                    firstName
-                    lastName
-                    address1
-                    address2
-                    phone
-                    city
-                    zip
-                    province
-                    provinceCode
-                    country
-                    countryCodeV2
-                }
-                shippingAddress {
-                    firstName
-                    lastName
-                    address1
-                    address2
-                    phone
-                    city
-                    zip
-                    province
-                    provinceCode
-                    country
-                    countryCodeV2
-                }
-                customer{
-                    id
-                    firstName
-                    lastName
-                    email
-                    phone
-                }',
-                $node_query
-            );
-        } else {
-            $node_query = str_replace('##customer##', '', $node_query);
-        }
-
-        $node_query = str_replace('##metafieldsCount##', $metafieldsCount, $node_query);
-        return $node_query;
-    }
-
-    public static function checkOrder($store, $order_name, $email, $sh_client = null)
-    {
-        if (empty($sh_client)) {
-            $sh_client = Core::getGraphQLClient($store);
-        }
-
-        $queryString = '
-            query {
-                orders(first: 10, query: "name:'.$order_name.'") {
-                    edges {
-                        node {
-                            ' . self::$orderNodeQuery . '
-                        }
-                    }
-                }
-            }
-        ';
-        $response = $sh_client->query(["query" => $queryString]);
-        $orderResponse = json_decode($response->getBody()->getContents(), true);
-        $orderId = isset($orderResponse['data']['orders']['edges']['0']) ? $orderResponse['data']['orders']['edges']['0']['node']['id'] : null;
-        $orderEmail = isset($orderResponse['data']['orders']['edges']['0']) ? $orderResponse['data']['orders']['edges']['0']['node']['email'] : null;
-
-        if (!empty($orderId) && (empty($email) || $email == $orderEmail)) {
-            return str_replace('gid://shopify/Order/','', $orderId);
-        } else {
-            return null;
-        }
-    }
-    public static function getOrder($store, $order_id, $sh_client = null, $withCustomer = true, $metafieldsCount = 15)
+    public static function getOrder($store, $order_id, $sh_client = null, $with = [], $limits = [])
     {
         if (is_numeric($order_id)) {
             $order_id = 'gid://shopify/Order/'.$order_id;
         }
+
+        $queryString = (new BuildGraphQl('order'))->with($with)->limits($limits)->build();
+
         $queryString = '
             query getOrder($id: ID!) {
                 order (id: $id){
-                    '.self::getOrderNodeQuery($withCustomer, $metafieldsCount).'
+                    '.$queryString.'
                 }
             }
         ';
         return Core::executeQueryAndHandleErrors($store, $queryString, ['id' => $order_id], 'order', $sh_client);
     }
 
-    public static function getOrders($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $withCustomer = true, $metafieldsCount = 15)
+    public static function getOrders($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [])
     {
         $query = '';
         if (!empty($filters)) {
@@ -239,7 +41,7 @@ class Orders
                 $text_filters[] = 'processed_at:>=\''.$filters['processed_after'].'\'';
             }
             if (isset($filters['unfulfilled_processed_before'])) {
-               $text_filters[] = 'query: "(processed_at:<=\''.$filters['unfulfilled_processed_before'].'\') AND (fulfillment_status:unfulfilled OR fulfillment_status:partial)", ';
+               $text_filters[] = '(processed_at:<=\''.$filters['unfulfilled_processed_before'].'\') AND (fulfillment_status:unfulfilled OR fulfillment_status:partial) ';
             }
             if (isset($filters['financial_status'])) {
                 $text_filters[] = 'financial_status:'.$filters['financial_status'];
@@ -257,11 +59,13 @@ class Orders
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
+        $queryString = (new BuildGraphQl('order'))->with($with)->limits($limits)->build();
+
         $queryString = '
          query ($recordsInPage: Int!, $cursor: String){
                 orders ('.$query.'first: $recordsInPage, after: $cursor){
                     nodes {
-                        '.self::getOrderNodeQuery($withCustomer, $metafieldsCount).'
+                        '.$queryString.'
                     }
                     pageInfo {
                         hasNextPage

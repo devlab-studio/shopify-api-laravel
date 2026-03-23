@@ -16,8 +16,7 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
         $package
             ->name('shopify-api-laravel')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_shopify_api_laravel_table');
+            ->hasMigrations('create_stores_table', 'create_store_actions_table');
     }
 
     public function boot()
@@ -27,16 +26,8 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
 
         // Editable files to be published
         $this->publishes([
-            __DIR__ . '/Helpers' => base_path('Helpers'),
-            __DIR__ . '/Classes' => app_path('Classes'),
-            __DIR__ . '/Models' => app_path('Models'),
             __DIR__ . '/ShopifyAPI' => app_path('ShopifyAPI'),
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../config' => config_path('shopify-api-laravel'),
         ], 'shopify-api-laravel-files');
-
-        // Load helpers directly if they are not published
-        foreach (glob(__DIR__ . '/Helpers/*.php') as $filename) {
-            require_once $filename;
-        }
     }
 }

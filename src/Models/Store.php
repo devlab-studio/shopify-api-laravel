@@ -1,12 +1,15 @@
 <?php
 
 namespace Devlab\ShopifyApiLaravel\Models;
+
 use Devlab\ShopifyApiLaravel\Traits\WithExtensions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
     use HasFactory;
+    use WithExtensions;
 
     protected $casts = [
         'store_urls' => 'array',

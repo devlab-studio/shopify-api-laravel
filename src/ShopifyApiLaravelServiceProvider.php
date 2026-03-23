@@ -24,10 +24,27 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
         // Charge migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        $this->offerPublishing();
+    }
+
+    protected function offerPublishing(): void
+    {
+        if (! $this->app->runningInConsole()) {
+            return;
+        }
+
+        if (! function_exists('config_path')) {
+            // function not available and 'publish' not relevant in Lumen
+            return;
+        }
+
         // Editable files to be published
         $this->publishes([
             __DIR__ . '/ShopifyAPI' => app_path('ShopifyAPI'),
-            __DIR__ . '/../config' => config_path('shopify-api-laravel'),
         ], 'shopify-api-laravel-files');
+
+        $this->publishes([
+            __DIR__ . '/../config/shopify-api-laravel.php' => config_path('shopify-api-laravel.php'),
+        ], 'shopify-api-laravel-config');
     }
 }

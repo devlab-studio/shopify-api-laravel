@@ -319,21 +319,21 @@ return [
     'app' => [
         'id',
         'title',
-        'installation' => [
-            'launchUrl',
-            'activeSubscriptions' => [
-                'id',
-                'name',
-                'createdAt',
-                'returnUrl',
-                'status',
-                'currentPeriodEnd',
-                'trialDays',
-                'lineItems' => [
-                    'id'
-                ]
-            ]
-        ]
+        'installation {
+            launchUrl
+            activeSubscriptions {
+                id
+                name
+                createdAt
+                returnUrl
+                status
+                currentPeriodEnd
+                trialDays
+                lineItems {
+                    id
+                }
+            }
+        }'
     ],
 
     'metafields' => [

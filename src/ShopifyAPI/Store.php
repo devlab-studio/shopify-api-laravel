@@ -26,7 +26,7 @@ class Store
 
         return $response;
     }
-    public static function getAppp($store, $app_id, $sh_client = null, $with = [], $limits = [])
+    public static function getApp($store, $app_id, $sh_client = null, $with = [], $limits = [])
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -46,7 +46,7 @@ class Store
 
         return $response;
     }
-    public static function getApppByKey($store, $apikey, $sh_client = null, $with = [], $limits = [])
+    public static function getAppByKey($store, $apikey, $sh_client = null, $with = [], $limits = [])
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);

@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": "^8.3",
+        "devlab-studio/laravel-logs": "^1.0",
         "illuminate/contracts": "^11.0||^12.0",
         "laravel/fortify": "^1.33",
         "laravel/jetstream": "^5.4",

@@ -23,6 +23,9 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
     {
         parent::boot();
 
+        // Load package routes
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+
         // Charge migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
@@ -44,6 +47,11 @@ class ShopifyApiLaravelServiceProvider extends PackageServiceProvider
         $this->publishes([
             __DIR__ . '/ShopifyAPI' => app_path('ShopifyAPI'),
         ], 'shopify-api-laravel-files');
+
+        // Publish default routes file so apps can customise if needed
+        $this->publishes([
+            __DIR__ . '/routes/web.php' => base_path('routes/shopify-api-laravel.php'),
+        ], 'shopify-api-laravel-routes');
 
         $this->publishes([
             __DIR__ . '/../config/shopify-api-laravel.php' => config_path('shopify-api-laravel.php'),

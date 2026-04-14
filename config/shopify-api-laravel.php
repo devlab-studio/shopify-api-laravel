@@ -336,6 +336,88 @@ return [
         }'
     ],
 
+     'codeDiscountNode' => [
+        'id',
+        'codeDiscount {
+            __typename
+            ... on DiscountCodeApp {
+                appliesOncePerCustomer
+                codes(first: 250) {
+                    nodes {
+                        id
+                        code
+                    }
+                }
+                title
+                usageLimit
+            }
+            ... on DiscountCodeBasic {
+                appliesOncePerCustomer,
+                codes(first: 250) {
+                    nodes {
+                        id
+                        code
+                    }
+                }
+                customerGets {
+                    value {
+                        ... on DiscountAmount {
+                            amount {
+                                amount
+                                currencyCode
+                            }
+                            appliesOnEachItem
+                        }
+                        ... on DiscountPercentage {
+                            percentage
+                        }
+                    }
+                }
+                title
+                summary
+                usageLimit
+            }
+            ... on DiscountCodeBxgy {
+                appliesOncePerCustomer
+                codes(first: 250) {
+                    nodes {
+                        id
+                        code
+                    }
+                }
+                customerGets {
+                    value {
+                        ... on DiscountAmount {
+                            amount {
+                                amount
+                                currencyCode
+                            }
+                            appliesOnEachItem
+                        }
+                        ... on DiscountPercentage {
+                            percentage
+                        }
+                    }
+                }
+                title
+                summary
+                usageLimit
+            }
+            ... on DiscountCodeFreeShipping {
+                appliesOncePerCustomer
+                codes(first: 250) {
+                    nodes {
+                        id
+                        code
+                    }
+                }
+                title
+                summary
+                usageLimit
+            }
+        }',
+    ],
+
     'metafields' => [
         'id',
         'key',

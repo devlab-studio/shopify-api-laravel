@@ -4,49 +4,49 @@
     <img src="https://dev-lab.es/assets/logos/main-light.svg" alt="Devlab Logo" width="400"/>
   </a>
 </p>
-<br></br>
+
+<p align="right">
+  <a href="README.es.md"><img src="https://img.shields.io/badge/Espa%C3%B1ol-Ver%20en%20ES-blue.svg?style=flat-square" alt="Español"/></a>
+</p>
 
 
 
+**Shopify API Laravel** is a package to easily integrate the Shopify API into your Laravel projects. It provides methods to fetch and manage Shopify products, orders, customers and stores using PHP, simplifying the connection to Shopify's official API from Laravel.
 
-**Shopify API Laravel** es un paquete para integrar de forma sencilla la API de Shopify en tus proyectos Laravel. Proporciona métodos para consultar y gestionar productos, pedidos y tiendas Shopify usando PHP, facilitando la conexión con la API oficial de Shopify desde Laravel.
-
-- Consulta y gestión de productos Shopify
-- Consulta y gestión de pedidos Shopify
-- Consulta y gestión de clientes Shopify
-- Consulta y gestión de inventario Shopify
-- Flujo de trabajo para webhooks Shopify
-- Métodos para obtener tiendas desde la base de datos
-- Utilidades para trabajar con GraphQL y la API oficial
+- Fetch and manage Shopify products
+- Fetch and manage Shopify orders
+- Fetch and manage Shopify customers
+- Fetch and manage Shopify inventory
+- Webhook workflow for Shopify
+- Methods to retrieve stores from the database
+- Utilities to work with GraphQL and the official API
 
 
-## Instalación
+## Installation
 
-Instala el paquete vía composer:
+Install the package via Composer:
 
 ```bash
 composer require devlab-studio/shopify-api-laravel
 ```
 
-Publica y ejecuta las migraciones necesarias:
+Publish and run the required migrations:
 
 ```bash
 php artisan vendor:publish --tag=shopify-api-laravel-migrations
 php artisan migrate
 ```
 
-Publica el archivo de configuración:
+Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag=shopify-api-laravel-config
 ```
 
 
+## Basic usage examples
 
-
-## Ejemplo de uso básico
-
-### Obtener tiendas
+### Get stores
 
 ```php
 use Devlab\ShopifyApiLaravel\Models\Store;
@@ -54,16 +54,16 @@ use Devlab\ShopifyApiLaravel\Models\Store;
 $stores = Store::dlGet();
 ```
 
-### Consultar productos de una tienda
+### Fetch products for a store
 
 ```php
 use Devlab\ShopifyApiLaravel\ShopifyAPI\Products;
 
-$store = Store::dlGet(1); 
-$products = Products::getProducts($store, []); 
+$store = Store::dlGet(1);
+$products = Products::getProducts($store, []);
 ```
 
-### Consultar un pedido
+### Fetch an order
 
 ```php
 use Devlab\ShopifyApiLaravel\ShopifyAPI\Orders;
@@ -73,19 +73,12 @@ $order = Orders::getOrder($store, $orderId);
 ```
 
 
-
-## Ejemplo de uso básico
-
+Refer to the [Shopify/GraphQL documentation](https://shopify.dev/docs/api/admin-graphql/latest) for more examples and details.
 
 
-Consulta la [documentación de Shopify/GraphQL](https://shopify.dev/docs/api/admin-graphql/latest) para más ejemplos y detalles de uso.
+## Resources
 
-
-
-## Recursos
-
-
-- [Soporte y contacto](https://dev-lab.es/contact)
+- [Support and contact](https://dev-lab.es/contact)
 
 ---
 

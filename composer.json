@@ -23,7 +23,8 @@
         "laravel/jetstream": "^5.4",
         "laravel/sanctum": "^4.2",
         "shopify/shopify-api": "^6.0",
-        "spatie/laravel-package-tools": "^1.16"
+        "spatie/laravel-package-tools": "^1.16",
+        "spatie/laravel-translatable": "*"
     },
     "require-dev": {
         "laravel/pint": "^1.14",

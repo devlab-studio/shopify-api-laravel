@@ -131,6 +131,12 @@ class SooController extends Controller
                 $mw_session->sso_data = $response;
                 $mw_session->save();
             }
+            if (isset($response['access_token'])) {
+                $api_credentials = $store->api_credentials;
+                $api_credentials['api_token'] = $response['access_token'];
+                $store->api_credentials = $api_credentials;
+                $store->save();
+            }
         } else {
             $response = [
                 'error' => 'no_code',

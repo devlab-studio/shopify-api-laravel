@@ -5,7 +5,7 @@ namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 class Products
 {
 
-    public static function getProduct($store, $product_id, $sh_client = null, $with = [], $limits = [])
+    public static function getProduct($store, $product_id, $sh_client = null, $with = [], $limits = [], $query_template = 'product')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -15,7 +15,7 @@ class Products
             $product_id = 'gid://shopify/Product/'.$product_id;
         }
 
-        $queryString = (new BuildGraphQl('product'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query getProduct($id: ID!) {
@@ -30,7 +30,7 @@ class Products
 
         return $response;
     }
-    public static function getProducts($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [])
+    public static function getProducts($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [], $query_template = 'product')
     {
 
         $query = '';
@@ -57,7 +57,7 @@ class Products
             }
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
-        $queryString = (new BuildGraphQl('product'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query ($recordsInPage: Int!, $cursor: String){
@@ -79,7 +79,7 @@ class Products
 
         return $response;
     }
-    public static function getProductVariant($store, $variant_id, $sh_client = null, $with = [], $limits = [])
+    public static function getProductVariant($store, $variant_id, $sh_client = null, $with = [], $limits = [], $query_template = 'variants')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -89,7 +89,7 @@ class Products
             $variant_id = 'gid://shopify/ProductVariant/'.$variant_id;
         }
 
-        $queryString = (new BuildGraphQl('productVariants'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         return Core::executeQueryAndHandleErrors($store, $queryString, [
             'id' => $variant_id
@@ -97,7 +97,7 @@ class Products
 
         return $response;
     }
-    public static function getProductVariants($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [])
+    public static function getProductVariants($store, $filters, $sh_client = null, $cursor = null, $recordsInPage = 100, $with = [], $limits = [], $query_template = 'variants')
     {
 
          $query = '';
@@ -117,7 +117,7 @@ class Products
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
-        $queryString = (new BuildGraphQl('productVariants'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query ($recordsInPage: Int!, $cursor: String){

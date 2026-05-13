@@ -242,11 +242,11 @@ return [
             id
         }',
 
-        'customer {
-            id
-            displayName
-            email
+
+        'customer(first: ##customersCount##) {
+            ##customersNodes##
         }',
+
     ],
 
     'inventoryItem' => [
@@ -514,5 +514,76 @@ return [
         }'
     ],
 
+
+    'customers' => [
+        'id',
+        'firstName',
+        'lastName',
+        'displayName',
+        'email',
+        'phone',
+        'locale',
+        'tags',
+        'note',
+        'state',
+        'createdAt',
+        'updatedAt',
+        'lifetimeDuration',
+        'numberOfOrders',
+
+        'image {
+            url
+        }',
+
+        'amountSpent {
+            amount
+            currencyCode
+        }',
+
+        'defaultAddress {
+            firstName
+            lastName
+            address1
+            address2
+            phone
+            city
+            zip
+            province
+            provinceCode
+            country
+            countryCodeV2
+        }',
+
+        'addresses {
+            firstName
+            lastName
+            address1
+            address2
+            phone
+            city
+            zip
+            province
+            provinceCode
+            country
+            countryCodeV2
+        }',
+
+        'addressesV2(first: ##addressesCount##) {
+            edges {
+                node {
+                    ##addressesV2Nodes##
+                }
+            }
+        }',
+
+        'events(first: ##eventsCount##) {
+            edges {
+                node {
+                    ##eventsNodes##
+                }
+            }
+        }',
+
+    ],
 ];
 

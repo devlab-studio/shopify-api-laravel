@@ -4,13 +4,13 @@ namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 
 class Orders
 {
-    public static function getOrder($store, $order_id, $sh_client = null, $with = [], $limits = [])
+    public static function getOrder($store, $order_id, $sh_client = null, $with = [], $limits = [], $query_template = 'order')
     {
         if (is_numeric($order_id)) {
             $order_id = 'gid://shopify/Order/'.$order_id;
         }
 
-        $queryString = (new BuildGraphQl('order'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query getOrder($id: ID!) {
@@ -22,7 +22,7 @@ class Orders
         return Core::executeQueryAndHandleErrors($store, $queryString, ['id' => $order_id], 'order', $sh_client);
     }
 
-    public static function getOrders($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [])
+    public static function getOrders($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [], $query_template = 'order')
     {
         $query = '';
         if (!empty($filters)) {
@@ -59,7 +59,7 @@ class Orders
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
-        $queryString = (new BuildGraphQl('order'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
          query ($recordsInPage: Int!, $cursor: String){

@@ -7,7 +7,7 @@ use Devlab\ShopifyApiLaravel\ShopifyAPI\Core;
 
 class Discounts
 {
-    public static function getCodeDiscount($store, $discount_id, $sh_client = null , $with = [], $limits = [])
+    public static function getCodeDiscount($store, $discount_id, $sh_client = null , $with = [], $limits = [], $query_template = 'codeDiscountNode')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -17,7 +17,7 @@ class Discounts
             $discount_id = 'gid://shopify/DiscountCodeNode/'.$discount_id;
         }
 
-        $queryString = (new BuildGraphQl('codeDiscountNode'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query getCodeDiscount($id: ID!) {
@@ -34,7 +34,7 @@ class Discounts
         return $response;
     }
 
-    public static function getCodeDiscounts($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [])
+    public static function getCodeDiscounts($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [], $query_template = 'codeDiscountNodes')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
@@ -54,7 +54,7 @@ class Discounts
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
-        $queryString = (new BuildGraphQl('codeDiscountNode'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
          query ($recordsInPage: Int!, $cursor: String){

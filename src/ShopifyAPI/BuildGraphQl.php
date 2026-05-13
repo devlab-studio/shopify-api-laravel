@@ -2,6 +2,7 @@
 
 namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 
+
 class BuildGraphQl
 {
     protected string $resource;
@@ -93,11 +94,22 @@ class BuildGraphQl
     /**
      * Determina si una relación debe incluirse basándose en el árbol de relaciones
      * Controla la profundidad para evitar ciclos infinitos en relaciones circulares
+     * customer y customers siempre requieren estar explícitamente en 'with'
      */
     protected function shouldIncludeRelation(string $key, array $withs, string $parentPath, int $depth, bool $hasSpecifiedRelations): bool
     {
         $maxDepth = 5;
         if ($depth > $maxDepth) {
+            return false;
+        }
+
+        if ($key === 'customer' || $key === 'customers') {
+            if (empty($withs)) {
+                return false;
+            }
+            if (isset($withs[$key])) {
+                return isset($withs[$key]['_included']) || !empty($withs[$key]['_children']);
+            }
             return false;
         }
 
@@ -151,6 +163,10 @@ class BuildGraphQl
             $content = preg_replace('/^\s*[a-zA-Z_]\w*\s*\([^)]+\)\s*$/m', '', $content);
         } while ($before !== $content);
 
+        // Remover parámetros de paginación para customer y customers
+        $content = preg_replace('/\bcustomer\s*\(\s*first:\s*\d+\s*\)/', 'customer', $content);
+        $content = preg_replace('/\bcustomers\s*\(\s*first:\s*\d+\s*\)/', 'customers', $content);
+
         // Normalizar espacios en blanco
         $content = preg_replace('/\n\s*\n+/', "\n", $content);
         $content = trim($content);
@@ -160,6 +176,7 @@ class BuildGraphQl
 
     /**
      * Elimina campos con first: 0 manejando llaves anidadas correctamente
+     * Excluye customer y customers para que siempre se incluyan
      */
     protected function removeFieldsWithZeroLimit(string $content): string
     {
@@ -173,14 +190,19 @@ class BuildGraphQl
 
             if (preg_match($pattern, $content, $matches, PREG_OFFSET_CAPTURE, $i)) {
                 $matchPos = $matches[0][1];
+                $matchText = $matches[0][0];
+
+                if (preg_match('/\b(customer|customers)\s*\(/', $matchText)) {
+                    $result .= substr($content, $i, $matchPos + strlen($matchText) - $i);
+                    $i = $matchPos + strlen($matchText);
+                    continue;
+                }
 
                 if ($matchPos > $i) {
                     $result .= substr($content, $i, $matchPos - $i);
                 }
 
-
-                $i = $matchPos + strlen($matches[0][0]);
-
+                $i = $matchPos + strlen($matchText);
 
                 $braceCount = 1;
                 while ($i < $length && $braceCount > 0) {

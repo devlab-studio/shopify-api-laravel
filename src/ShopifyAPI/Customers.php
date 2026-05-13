@@ -5,9 +5,9 @@ namespace Devlab\ShopifyApiLaravel\ShopifyAPI;
 class Customers
 {
 
-    public static function getCustomer($store, $customer_id, $sh_client = null , $with = [], $limits = [])
+    public static function getCustomer($store, $customer_id, $sh_client = null , $with = [], $limits = [],  $query_template = 'customer')
     {
-       $queryString = (new BuildGraphQl('customer'))->with($with)->limits($limits)->build();
+       $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'customer_id' => $customer_id
         ], 'customer',  $sh_client);
@@ -15,7 +15,7 @@ class Customers
         return $response;
     }
 
-    public static function getCustomers($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [])
+    public static function getCustomers($store, $filters, $cursor = null, $recordsInPage = 100, $sh_client = null, $with = [], $limits = [], $query_template = 'customers')
     {
 
         $query = '';
@@ -38,7 +38,7 @@ class Customers
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
         }
 
-        $queryString = (new BuildGraphQl('customers'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'recordsInPage' => $recordsInPage,
             'cursor' => $cursor,

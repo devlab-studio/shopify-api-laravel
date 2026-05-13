@@ -6,13 +6,13 @@ use Exception;
 
 class Store
 {
-    public static function getShop($store, $sh_client = null, $with = [], $limits = [])
+    public static function getShop($store, $sh_client = null, $with = [], $limits = [], $query_template = 'shop')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
         }
 
-        $queryString = (new BuildGraphQl('shop'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query {
@@ -26,13 +26,13 @@ class Store
 
         return $response;
     }
-    public static function getApp($store, $app_id, $sh_client = null, $with = [], $limits = [])
+    public static function getApp($store, $app_id, $sh_client = null, $with = [], $limits = [], $query_template = 'app')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
         }
 
-        $queryString = (new BuildGraphQl('app'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query getApp($id: ID!) {
@@ -46,13 +46,13 @@ class Store
 
         return $response;
     }
-    public static function getAppByKey($store, $apikey, $sh_client = null, $with = [], $limits = [])
+    public static function getAppByKey($store, $apikey, $sh_client = null, $with = [], $limits = [], $query_template = 'app')
     {
         if (empty($sh_client)) {
             $sh_client = Core::getGraphQLClient($store);
         }
 
-        $queryString = (new BuildGraphQl('app'))->with($with)->limits($limits)->build();
+        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
 
         $queryString = '
             query getAppByKey($apikey: String!) {

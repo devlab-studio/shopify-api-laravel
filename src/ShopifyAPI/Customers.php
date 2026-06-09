@@ -8,8 +8,16 @@ class Customers
     public static function getCustomer($store, $customer_id, $sh_client = null , $with = [], $limits = [],  $query_template = 'customer')
     {
        $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
+       $queryString = '
+            query ($id: ID!){
+                customer (id: $id){
+                    '.$queryString.'
+                }
+            }
+        ';
+
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
-            'customer_id' => $customer_id
+            'id' => $customer_id
         ], 'customer',  $sh_client);
 
         return $response;
@@ -39,6 +47,19 @@ class Customers
         }
 
         $queryString = (new BuildGraphQl($query_template))->with($with)->limits($limits)->build();
+        $queryString = '
+            query ($recordsInPage: Int!, $cursor: String){
+                customers ('.$query.'first: $recordsInPage, after: $cursor){
+                    nodes {
+                        '.$queryString.'
+                    }
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                }
+            }
+        ';
         $response = Core::executeQueryAndHandleErrors($store, $queryString, [
             'recordsInPage' => $recordsInPage,
             'cursor' => $cursor,

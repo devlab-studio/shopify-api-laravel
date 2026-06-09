@@ -37,10 +37,10 @@ class Customers
                 $text_filters[] = 'created_at:>=\''.$filters['created_at'].'\'';
             }
             if (isset($filters['email'])) {
-                $text_filters[] = 'query: "email:'.$filters['email'].'", ';
+                $text_filters[] = 'email:\''.$filters['email'].'\'';
             }
             if (isset($filters['state'])) {
-                $text_filters[] ='query: "state:'.$filters['state'].'", ';
+                $text_filters[] ='state:'.$filters['state'];
             }
 
             $query = str_replace('###FILTERS###', implode(' AND ', $text_filters), $query);
